@@ -160,6 +160,20 @@ docker stop nginx
 
 ## 追記
 
+project/settings.py
+
+```
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'pairleary_app.apps.PairlearyAppConfig'  #ここに追記
+]
+```
+
 1.  app/models.py (内容は適当です)
 
 ```
