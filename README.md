@@ -157,3 +157,90 @@ docker stop nginx
 ./.docker_clear.sh
 
 ```
+
+## 追記
+
+1.  app/models.py (内容は適当です)
+
+```
+from django.conf import settings
+from django.db import models
+from django.utils import timezone
+
+
+class Post(models.Model):
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    title = models.CharField(max_length=200)
+    text = models.TextField()
+    created_date = models.DateTimeField(default=timezone.now)
+    published_date = models.DateTimeField(blank=True, null=True)
+
+    def publish(self):
+        self.published_date = timezone.now()
+        self.save()
+
+    def __str__(self):
+        return self.title
+```
+
+2. makemigrations
+
+   docker compose run app python manage.py makemigrations pairleary_app
+
+3. migrate
+   docker-compose run app python manage.py migrate pairleary_app
+
+4. app/admin.py
+
+```
+from django.contrib import admin
+
+from django.contrib import admin
+from .models import Post
+
+admin.site.register(Post)
+
+```
+
+5. project/urls.py
+
+```
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', include('pairleary_app.urls')),
+]
+```
+
+6. app/urls.py (新規作成)
+
+```
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.post_list, name='post_list'),
+]
+```
+
+7. app/views.py
+   app 配下に templates/post_list.html 作成
+
+```
+from django.shortcuts import render
+
+def post_list(request):
+    return render(request, 'post_list.html', {})
+```
+
+8. html に何かを書く
+9. http://localhost:8000 にアクセス
+10. 表示されている？
+    NO→ エラーが出たら修正して ↓
+
+```
+./.docker_clear.sh
+docker compose -f docker-compose.yml up -d --build
+```
