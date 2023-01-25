@@ -1,21 +1,26 @@
 # Docker_Django_uWSGI_Sample
+
 Docker + Django + Nginx + uWSGI + MySQL
 
-## 
-## app_dirディレクトリ内にプロジェクトを生成
-# 
-# 開発環境設定
-1. docker-compose.ymlと同じ階層に開発環境「.env」ファイルと本番環境「.prod.env」ファイルを作成し記述
+##
 
+## app_dir ディレクトリ内にプロジェクトを生成
+
+#
+
+# 開発環境設定
+
+1. docker-compose.yml と同じ階層に開発環境「.env」ファイルと本番環境「.prod.env」ファイルを作成し記述
 
 2. プロジェクトを新規作成
+
 ```
 # docker compose -f <指定するdocker-composeのファイル> run app django-admin startproject <プロジェクト名> <プロジェクトを作成するディレクトリ>
-docker compose -f docker-compose.yml run app django-admin startproject djangopj .
+docker compose -f docker-compose.yml run app django-admin startproject pairleary_project .
 ```
 
+3. settings.py を編集
 
-3. settings.pyを編集
 ```
 # osのモジュールをインポート
 import os
@@ -67,50 +72,50 @@ TEMPLATES = [
 
 ```
 
-
 4. 下記コマンドを実行する
+
 ```
 docker compose -f docker-compose.yml up -d
 ```
 
-* ブラウザで確認
-http://localhost:8000
-
+- ブラウザで確認
+  http://localhost:8000
 
 5. マイグレートして、スーパーユーザーを作成する
+
 ```
 ./.migration.sh
 ```
 
+- ブラウザで確認
+  http://localhost:8000/admin
 
-* ブラウザで確認
-http://localhost:8000/admin
+6. 一旦 Docker をリセットする
 
-
-6. 一旦Dockerをリセットする
 ```
 ./.docker_clear.sh
 ```
 
+7. Docker を起動
 
-7. Dockerを起動
 ```
 docker compose -f docker-compose.yml up -d --build
 ```
 
-
-8. app_dir内でDjangoアプリを開発して行く
-
+8. app_dir 内で Django アプリを開発して行く
 
 # 本番環境設定
-9. docker-compose.prod.ymlの編集
+
+9. docker-compose.prod.yml の編集
+
 ```
 uwsgi --socket :8000 --module [アプリ名].wsgi --py-autoreload 1 --logto /tmp/mylog.log
 ```
 
-
 10. [wsgi.ini]作成編(記述途中)
-* /<プロジェクト名>/uwsgi.iniを作成する
+
+- /<プロジェクト名>/uwsgi.ini を作成する
+
 ```
 [uwsgi]
 chdir            = /home/www-user/<プロジェクト名>
@@ -135,19 +140,17 @@ log-5xx          = true
 env DJANGO_SETTINGS_MODULE = <プロジェクト名>.settings
 ```
 
-
-
 11. 本番環境で立ち上げ
+
 ```
 docker compose -f docker-compose.prod.yml up -d --build
 ```
 
+- ブラウザで確認
+  http://localhost
 
-* ブラウザで確認
-http://localhost
+12. Docker の停止・削除
 
-
-12. Dockerの停止・削除
 ```
 docker stop nginx
 
